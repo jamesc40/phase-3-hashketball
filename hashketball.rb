@@ -1,3 +1,4 @@
+require 'pry'
 # Write your code below game_hash
 def game_hash
   {
@@ -91,7 +92,7 @@ def game_hash
         {
           player_name: "DeSagna Diop",
           number: 2,
-          shoe: 14,
+          shoe: 14, 
           points: 24,
           rebounds: 12,
           assists: 12,
@@ -127,3 +128,89 @@ def game_hash
 end
 
 # Write code here
+#$home = game_hash[:home]  
+#$away = game_hash[:away]
+#$all = $home[:players] + $away[:players]
+def all_players
+  game_hash[:home][:players] + game_hash[:away][:players]
+end
+
+def player_stats name
+  all_players.find { |player| player[:player_name] == name } 
+end
+
+def find_team name
+  #name ==  $home[:team_name] ? game_hash[:home] : game_hash[:away]
+  team_info = game_hash.find do |location, team_data|
+    team_data[:team_name] == name
+  end[1]
+end
+
+def num_points_scored name
+  player_stats(name)[:points]
+end
+
+def shoe_size name
+  player_stats(name)[:shoe]
+end
+
+def team_colors name
+  find_team(name)[:colors]
+end
+
+binding.pry
+
+def team_names 
+  #[$home[:team_name], $away[:team_name]]
+  game_hash.map { |key, value| value[:team_name] }
+end
+
+def player_numbers name
+  find_team(name)[:players].map { |player| player[:number] }
+end
+
+def find_most stat
+ # most = 0
+ # player_with_most = nil
+ # $all.each do |player|
+ #   if(player[comparison] > most)
+ #     most = player[comparison]
+ #     player_with_most = player
+ #   end
+ # end
+ # player_with_most[stat]
+  all_players.max_by { |player| player[stat] }
+end
+
+def big_shoe_rebounds
+  #find_most(:shoe, :rebounds)
+  find_most(:shoe)[:rebounds]
+end
+
+def most_points_scored
+  find_most(:points)[:player_name]
+end
+
+
+def winning_team
+  home_points = game_hash[:home][:players].map { |player| player[:points] }.sum
+  away_points = game_hash[:away][:players].map { |player| player[:points] }.sum
+  puts home_points
+  home_points > away_points ? game_hash[:home][:team_name] : game_hash[:away][:team_name] 
+end
+
+def player_with_longest_name
+  #longest_name = ''
+  #$all.each do |player|
+  #  if(player[:player_name].length > longest_name.length)
+  #    longest_name = player[:player_name] 
+  #  end
+  #end
+  #longest_name
+  all_players.max_by { |player| player[:player_name].length }[:player_name]
+end
+
+def long_name_steals_a_ton?
+  player_with_longest_name == find_most(:steals)[:player_name] 
+end
+
